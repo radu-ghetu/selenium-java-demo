@@ -3,13 +3,9 @@ package com.web.steps;
 import com.web.dashboard.pages.LoginPage;
 import com.web.util.ConfigurationReader;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
 
 import static com.web.util.Driver.getDriver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +21,8 @@ public class LoginStepDef {
     @io.cucumber.java.en.Given("I'm on the login page")
     public void iMOnTheLoginPage() {
         getDriver().get(ConfigurationReader.get("url"));
-        loginPage.verifyLoginPageLoaded();
+        loginPage.navigate();
+        loginPage.verifyPageLoaded();
     }
 
     @io.cucumber.java.en.When("I login using valid credentials")

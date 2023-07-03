@@ -44,8 +44,6 @@ public class LoginPage extends AbstractBredPage {
     @FindBy(css=".icon-signout")
     public WebElement logout_btn;
 
-
-
     public void login(String user, String pass) {
         usernameField.clear();
         usernameField.sendKeys(user);
@@ -55,30 +53,7 @@ public class LoginPage extends AbstractBredPage {
         LOG.info("User logged in using submit bottom");
     }
 
-    public WebElement getSubmit_btn() {
-        return submit_btn;
-    }
-
-    public boolean ifLoginPageLoaded() {
-        boolean loaded = false;
-        try {
-            LoginURLCorrect();
-            loaded = true;
-            LOG.info("Page is loaded");
-        } catch (Exception e) {
-            LOG.debug("Some elements are not presented");
-            e.printStackTrace();
-        } finally {
-            return loaded;
-        }
-    }
-
-    public void LoginURLCorrect() {
-        LOG.info("Checking auth0 URL login to correct env");
-
-    }
-
-    public void verifyLoginPageLoaded() throws TimeoutException {
+    public void verifyPageLoaded() throws TimeoutException {
         waitForClickable(submit_btn);
         try {
             Assert.assertTrue(usernameField.isDisplayed());
@@ -90,12 +65,8 @@ public class LoginPage extends AbstractBredPage {
         }
     }
 
-    public void clickSubmit() {
-        submit_btn.click();
-    }
-
-
-    public void verifyLoginSuccess() {
+     public void verifyLoginSuccess() {
+        waitForPageToLoad();
         assertTrue(loginMessage.getText().contains("You logged into a secure area!"));
     }
 
@@ -106,5 +77,9 @@ public class LoginPage extends AbstractBredPage {
     public void verifyLoggedOut() {
         waitForPageToLoad();
         assertTrue(submit_btn.isDisplayed());
+    }
+
+    public void navigate() {
+        getDriver().get(ConfigurationReader.get("url")+"/login");
     }
 }

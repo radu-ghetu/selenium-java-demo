@@ -20,7 +20,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.web" level="debug" additivity="true">
+        <Logger name="com.brivo" level="debug" additivity="true">
             <appender-ref ref="RollingFile" level="debug" />
         </Logger>
         <Root level="debug" additivity="false">
