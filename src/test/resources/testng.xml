@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Brivo Access Suite">
+    <test name="Run with Cucumber">
+        <classes>
+            <class name="CucumberRunner"/>
+        </classes>
+    </test> <!-- Test -->
+
+    <test name="ReRun with Cucumber">
+        <classes>
+            <class name="CucumberRunnerRerun"/>
+        </classes>
+
+    </test> <!-- Test -->
+</suite> <!-- Suite -->
