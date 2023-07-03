@@ -56,7 +56,14 @@ public class DynamicPage extends AbstractBredPage {
     }
 
     public void clickDisableInputBtn() {
-        disableInputBtn.click();
+        if (disableInputBtn.getText().equals("Disable")) {
+            disableInputBtn.click();
+        }
+        else {
+            disableInputBtn.click();
+            waitForInvisibilityOf(loadingIndicator);
+            disableInputBtn.click();
+        }
     }
 
     public void verifyInputDisabled() {
