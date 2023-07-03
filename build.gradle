@@ -125,7 +125,7 @@ def cucumberTestParallel(path, filename, browser, tag, env) {
         classpath = path
 
         args '-g',
-                'com.brivo.steps',
+                'com.web.steps',
                 "src/test/java/com/brivo/features/${filename}",
                 '-t', "${tag}",
                 '--plugin', "rerun:${reporting.baseDir}/cucumber/rerun/${filename}_${browser}_rerun.txt",
@@ -142,7 +142,7 @@ def cucumberRerunFailed(path, file, browser) {
         String s = file.text
         String filename = file.name
         args '-g',
-                'com.brivo.steps',
+                'com.web.steps',
                 "${s}",
                 '--plugin', "json:${reporting.baseDir}/cucumber/rerun/${filename}_(${browser}).json",
                 '--plugin', "junit:build/reports/RERUN_${filename}_(${browser}).xml"
