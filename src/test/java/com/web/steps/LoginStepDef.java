@@ -37,4 +37,14 @@ public class LoginStepDef {
     public void iVerifyIAmOnLandingPage() {
         loginPage.verifyLoginSuccess();
     }
+
+    @And("I click the logout button")
+    public void iClickTheLogoutButton() {
+        loginPage.clickLogout();
+    }
+
+    @Then("I should be logged out")
+    public void iShouldBeLoggedOut() {
+        loginPage.verifyLoggedOut();
+    }
 }

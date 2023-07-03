@@ -32,14 +32,17 @@ public class LoginPage extends AbstractBredPage {
     @FindBy(id = "password")
     private WebElement passwordField;
 
-    @FindBy(id = "submit")
+    @FindBy(css = "button[type='submit']")
     private WebElement submit_btn;
 
     @FindBy(id = "input-email")
     public WebElement inputEmail;
 
-    @FindBy(css="article div h1")
+    @FindBy(id="flash")
     public WebElement loginMessage;
+
+    @FindBy(css=".icon-signout")
+    public WebElement logout_btn;
 
 
 
@@ -93,6 +96,15 @@ public class LoginPage extends AbstractBredPage {
 
 
     public void verifyLoginSuccess() {
-        assertTrue(loginMessage.getText().equals("Logged In Successfully"));
+        assertTrue(loginMessage.getText().contains("You logged into a secure area!"));
+    }
+
+    public void clickLogout() {
+        logout_btn.click();
+    }
+
+    public void verifyLoggedOut() {
+        waitForPageToLoad();
+        assertTrue(submit_btn.isDisplayed());
     }
 }
