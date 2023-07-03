@@ -126,7 +126,7 @@ def cucumberTestParallel(path, filename, browser, tag, env) {
 
         args '-g',
                 'com.web.steps',
-                "src/test/java/com/brivo/features/${filename}",
+                "src/test/java/com/web/features/${filename}",
                 '-t', "${tag}",
                 '--plugin', "rerun:${reporting.baseDir}/cucumber/rerun/${filename}_${browser}_rerun.txt",
                 '--plugin', "json:${reporting.baseDir}/cucumber/${filename}_(${browser}).json",
@@ -215,7 +215,7 @@ test {
             if (System.properties.getProperty('pool') != null) {
                 pool = System.properties.getProperty('pool').toInteger()
             }
-            def features = fileTree(dir: "${project.projectDir}/src/test/java/com/brivo/features/").include '**/*.feature'
+            def features = fileTree(dir: "${project.projectDir}/src/test/java/com/web/features/").include '**/*.feature'
             println(" Used pool size (parallel threads) is : " + pool)
             GParsPool.withPool(pool) {
                 features.eachParallel { File file ->

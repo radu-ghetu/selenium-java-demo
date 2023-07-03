@@ -1,7 +1,6 @@
 package com.web.dashboard.pages.abstractPages;
 
 import com.web.dashboard.pages.components.abstractComp.AbstractPageObject;
-import com.web.dashboard.pages.components.interfaces.PageHeaderTitleI;
 import com.web.util.ConfigurationReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,9 +70,6 @@ public abstract class AbstractBredPage extends AbstractPageObject {
         }
         return this;
     }
-
-    public boolean hasHeaderTitle() {
-        return this instanceof PageHeaderTitleI;}
 
     public void titleVerification(String expectedTitle) {
         LOG.info("Verifying title");

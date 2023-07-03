@@ -1,6 +1,5 @@
 package com.web.dashboard.pages.components.abstractComp;
 
-import com.web.dashboard.pages.components.DomEvent;
 import com.web.dashboard.pages.components.interfaces.ComponentI;
 import com.web.util.Driver;
 import com.web.util.MessageException;
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.web.dashboard.pages.components.DomEvent.*;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -694,7 +692,6 @@ public abstract class AbstractComponent implements ComponentI {
     protected void updateTextField(WebElement element, String text) {
         clear(element);
         type(element, text);
-        triggerEvent(element, CHANGE);
     }
 
     /**
@@ -738,9 +735,6 @@ public abstract class AbstractComponent implements ComponentI {
         element.clear();
         if (StringUtils.isNotBlank(text)) {
             type(element, text);
-            triggerEvent(element, FOCUS);
-            triggerEvent(element, CHANGE);
-            triggerEvent(element, BLUR);
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].focus();.change().blur();", element);
         }
@@ -774,15 +768,6 @@ public abstract class AbstractComponent implements ComponentI {
     }
 
     //Javascript capabilities
-
-    /*
-     * Due to how some of the JS interacts on the pages sometimes it is necessary to
-     */
-    protected void triggerEvent(WebElement element, DomEvent event) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].dispatchEvent(new Event('" + event.toString() + "'));",
-                element);
-    }
 
     public Object executeJs(String script, Object... args) {
         JavascriptExecutor js = (JavascriptExecutor) driver;

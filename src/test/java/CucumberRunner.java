@@ -3,7 +3,7 @@ import io.cucumber.testng.CucumberOptions;
 import org.testng.annotations.DataProvider;
 
 @CucumberOptions(
-        features = {"src/test/java/com/brivo/features/"}
+        features = {"src/test/java/com/web/features/"}
         , glue = {"com.web.steps"}
         , plugin = {"junit:build/reports/cucumber/cucumber-junit.xml",
         "json:build/reports/cucumber/cucumber.json",
