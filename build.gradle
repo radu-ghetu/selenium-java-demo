@@ -1,0 +1,288 @@
+import groovyx.gpars.GParsPool
+import net.masterthought.cucumber.ReportBuilder
+import net.masterthought.cucumber.Reportable
+
+buildscript {
+    repositories {
+        maven {
+            url "https://repo.bodar.com"
+        }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.codehaus.gpars:gpars:1.2.1",
+                "net.masterthought:cucumber-reporting:3.5.1",
+                "org.json:json:20201115"
+    }
+}
+
+plugins {
+    id "java"
+    id "idea"
+    id "groovy"
+
+}
+
+plugins {
+    id "com.gradle.plugin-publish" version "0.10.1"
+    id "java-gradle-plugin"
+    id 'maven-publish'
+}
+plugins {
+    id "se.thinkcode.cucumber-runner" version "0.0.8"
+}
+
+apply plugin: 'java'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/libs-release" }
+    maven { url "https://repo.bodar.com" }
+    jcenter()
+}
+ext {
+    seleniumVersion = '4.8.0'
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    implementation group: 'de.taimos', name: 'totp', version: '1.0'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+    implementation group: 'com.google.zxing', name: 'javase', version: '3.5.0'
+}
+
+dependencies {
+
+
+    implementation gradleApi()
+
+    testImplementation 'org.codehaus.gpars:gpars:1.2.1'
+
+    testImplementation 'org.apache.commons:commons-lang3:3.3.2'
+    testImplementation 'commons-io:commons-io:2.5'
+
+    testImplementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+    testImplementation 'com.google.guava:guava:28.1-jre'
+    testImplementation 'au.com.bytecode:opencsv:2.4'
+    testImplementation 'com.fasterxml.jackson.core:jackson-core:2.9.9'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+    testImplementation 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.9'
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.9"
+
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.2.0'
+
+    implementation("org.json:json:20201115")
+
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '4.8.0'
+    testImplementation 'io.cucumber:cucumber-java:4.8.0'
+    testImplementation 'io.cucumber:cucumber-testng:4.8.0'
+
+
+    testImplementation group: 'net.masterthought', name: 'cucumber-reporting', version: '5.7.5'
+
+    testImplementation(group: 'junit', name: 'junit', version: '4.12')
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
+    testRuntimeOnly('org.junit.vintage:junit-vintage-engine:5.5.2') {
+        because 'allows JUnit 3 and JUnit 4 tests to run'
+    }
+    testImplementation(group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.2')
+
+
+    testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'com.typesafe:config:1.3.1'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.2.0'
+
+    testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.29'
+
+    testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.1.2'
+    testImplementation group: 'io.rest-assured', name: 'json-schema-validator', version: '4.1.2'
+}
+
+dependencies {
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+def cucumberTestParallel(path, filename, browser, tag, env) {
+    javaexec {
+        systemProperties = System.properties
+        main = "io.cucumber.core.cli.Main"
+        classpath = path
+
+        args '-g',
+                'com.brivo.steps',
+                "src/test/java/com/brivo/features/${filename}",
+                '-t', "${tag}",
+                '--plugin', "rerun:${reporting.baseDir}/cucumber/rerun/${filename}_${browser}_rerun.txt",
+                '--plugin', "json:${reporting.baseDir}/cucumber/${filename}_(${browser}).json",
+                '--plugin', "junit:build/reports/TEST_${filename}_(${browser}).xml"
+    }
+}
+
+def cucumberRerunFailed(path, file, browser) {
+    javaexec {
+        systemProperties = System.properties
+        main = "io.cucumber.core.cli.Main"
+        classpath = path
+        String s = file.text
+        String filename = file.name
+        args '-g',
+                'com.brivo.steps',
+                "${s}",
+                '--plugin', "json:${reporting.baseDir}/cucumber/rerun/${filename}_(${browser}).json",
+                '--plugin', "junit:build/reports/RERUN_${filename}_(${browser}).xml"
+    }
+}
+
+task gitPull(type: Exec) {
+    commandLine "git", "pull"
+}
+
+task generate(type: Test) {
+
+    doLast {
+            println("\nStart generating Report ...");
+            def jsonReports = fileTree(dir: "${reporting.baseDir}/cucumber/").include '*.json'.toString()
+            File reportOutputDirectory = new File("${reporting.baseDir}/cucumber/");
+
+            List<String> jsonReportFiles = new ArrayList<String>();
+            jsonReports.each { File file ->
+                jsonReportFiles.add("${reporting.baseDir}/cucumber/${file.name}".toString());
+            }
+
+            net.masterthought.cucumber.Configuration configuration = new net.masterthought.cucumber.Configuration(reportOutputDirectory, "cucumber-gradle-parallel");
+            // optional configuration
+            configuration.setParallelTesting(true);
+            configuration.setRunWithJenkins(false);
+            configuration.setBuildNumber("1988");
+
+            ReportBuilder reportBuilder = new ReportBuilder(jsonReportFiles, configuration);
+            Reportable result = reportBuilder.generateReports();
+            println("\nReport available on: ${reporting.baseDir}/cucumber/" + "cucumber-html-reports/overview-features.html")
+    }
+}
+
+def generateRerun() {
+        println("\nStart generating Rerun Report ...");
+        def jsonReports = fileTree(dir: "${reporting.baseDir}/cucumber/rerun/").include '*.json'.toString()
+        File reportOutputDirectory = new File("${reporting.baseDir}/cucumber/rerun/");
+
+        List<String> jsonReportFiles = new ArrayList<String>();
+        jsonReports.each { File file ->
+            jsonReportFiles.add("${reporting.baseDir}/cucumber/rerun/${file.name}".toString());
+        }
+
+        net.masterthought.cucumber.Configuration configuration = new net.masterthought.cucumber.Configuration(reportOutputDirectory, "cucumber-gradle-parallel");
+        // optional configuration
+        configuration.setParallelTesting(true);
+        configuration.setRunWithJenkins(false);
+        configuration.setBuildNumber("1988");
+
+        ReportBuilder reportBuilder = new ReportBuilder(jsonReportFiles, configuration);
+        Reportable result = reportBuilder.generateReports();
+        println("\nReport available on: ${reporting.baseDir}/cucumber/rerun/" + "cucumber-html-reports/overview-features.html")
+
+}
+
+test {
+    systemProperties = System.properties
+    String tags = System.properties.getProperty('tag')
+    String t_list = tags
+    jvmArgs(["-Ddataproviderthreadcount=${threads}"])
+    jvmArgs(["-Dtype=${type}"])
+
+    if (System.properties.getProperty("type") == 'parallelFeature') {
+        System.properties.setProperty("pool", "${threads}")
+        useJUnitPlatform()
+        doLast {
+            def browser = System.properties.getProperty('browser.type')
+            def pool = 4
+            if (System.properties.getProperty('pool') != null) {
+                pool = System.properties.getProperty('pool').toInteger()
+            }
+            def features = fileTree(dir: "${project.projectDir}/src/test/java/com/brivo/features/").include '**/*.feature'
+            println(" Used pool size (parallel threads) is : " + pool)
+            GParsPool.withPool(pool) {
+                features.eachParallel { File file ->
+                    try {
+                        println("Starting tests in feature file : " + file.name)
+                        cucumberTestParallel(classpath, file.name, browser, t_list, System.properties.getProperty('env'))
+                    }
+                    catch (Exception e) {
+
+                    }
+                }
+            }
+            def failedTests = 0
+            def rerunFeatures = fileTree(dir: "${project.projectDir}/build/reports/cucumber/rerun/").include '**/*.txt'
+            rerunFeatures.each { File file ->
+                def nrTests = file.text.findAll(":")
+                if (nrTests.size() > 0) {
+                    failedTests = failedTests + nrTests.size() - 1
+                }
+            }
+            if ((failedTests > 0) && (failedTests < 11)) {
+
+                println("A nr of " + failedTests + " failed tests will be rerun.")
+                GParsPool.withPool(pool) {
+                    rerunFeatures.eachParallel { File file ->
+                        try {
+                            cucumberRerunFailed(classpath, file, browser)
+                        }
+                        catch (Exception e) {
+
+                        }
+                    }
+                }
+                generateRerun()
+            }
+            if ((failedTests > 0) && (failedTests >= 11)) {
+                println("11 or more tests failed !")
+                manager.build.@result = hudson.model.Result.NEW - STATUS - TO - SET
+            }
+        }
+    } else {
+        t_list = "-t '" + t_list + "'"
+        jvmArgs(["-Dcucumber.options=${t_list}"])
+        useTestNG() {
+            options.suites("src/test/resources/testng.xml")
+        }
+    }
+    scanForTestClasses = false
+    testLogging.showStandardStreams = true
+    testLogging {
+        events "failed", "skipped"
+        exceptionFormat "short"
+
+        debug {
+            events "started", "skipped", "failed", "passed"
+            exceptionFormat "full"
+        }
+    }
+    outputs.upToDateWhen {
+        false
+    }
+
+    classpath = project.configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+    finalizedBy(generate)
+}
+
+wrapper {
+    gradleVersion = '7.6'
+    distributionType = Wrapper.DistributionType.ALL
+}
