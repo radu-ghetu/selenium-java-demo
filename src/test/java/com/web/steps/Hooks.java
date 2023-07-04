@@ -16,21 +16,16 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
-
 import static com.web.util.Driver.getDriver;
-import static org.junit.Assert.assertTrue;
 
 public class Hooks {
     private static Config env = ConfigurationReader.config;
     String browser = ConfigurationReader.get("browser.type");
     private Screenshots screenshots = new Screenshots();
     private static Logger LOG = LogManager.getLogger(Hooks.class);
-    int pageTimeout = env.getInt("page.timeout.seconds");
     int implicitlyWait = env.getInt("implicit.timeout.seconds");
-    LoginPage loginPage = new LoginPage();
-    String TSuiteID;
 
-    @Before(order = 1, value = "not @supportadmin")
+    @Before(order = 1)
     public void setUp(Scenario scenario) throws IOException, InterruptedException {
         LOG.info(
                 "-------------------------- Before hook starts " +
