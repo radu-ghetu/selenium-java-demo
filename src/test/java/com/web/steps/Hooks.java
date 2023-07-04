@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+
 import static com.web.util.Driver.getDriver;
 
 public class Hooks {
@@ -48,7 +49,7 @@ public class Hooks {
             if (scenario.isFailed()) {
                 LOG.error("***** Error test is fail *****");
                 String fileNameBase = "Screenshot-" + browser + "-" + env.getString("env") + "-" + formatter.format(calendar.getTime()) + "-" + scenario.getName();
-                byte[] fileContent = Files.readAllBytes( screenshots.takeScreenshot(fileNameBase).toPath());
+                byte[] fileContent = Files.readAllBytes(screenshots.takeScreenshot(fileNameBase).toPath());
                 scenario.embed(fileContent, "image/png");
             }
 

@@ -24,7 +24,7 @@ public class HoverPage extends AbstractBredPage {
     private List<WebElement> captions;
 
     public void navigate() {
-        getDriver().get(ConfigurationReader.get("url")+"/hovers");
+        getDriver().get(ConfigurationReader.get("url") + "/hovers");
     }
 
     public void verifyPageLoaded() {
@@ -33,12 +33,12 @@ public class HoverPage extends AbstractBredPage {
 
     public void hoverToElement(int i) {
         Actions a = new Actions(getDriver());
-        a.moveToElement(figures.get(i-1)).perform();
+        a.moveToElement(figures.get(i - 1)).perform();
     }
 
     public void verifyCorrectCaptionShown(int i) {
-        LOG.info("Display = " + captions.get(i-1).getCssValue("display"));
-        Assert.assertTrue(captions.get(i-1).getCssValue("display").equals("block"));
-        Assert.assertTrue(captions.get(i-1).getText().contains(String.valueOf(i)));
+        LOG.info("Display = " + captions.get(i - 1).getCssValue("display"));
+        Assert.assertTrue(captions.get(i - 1).getCssValue("display").equals("block"));
+        Assert.assertTrue(captions.get(i - 1).getText().contains(String.valueOf(i)));
     }
 }

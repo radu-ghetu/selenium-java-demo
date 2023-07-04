@@ -1,4 +1,4 @@
-@Prod
+@Prod @Int
 Feature: DynamicTests
 
   Scenario: I, as a valid user should be able to remove a checkbox

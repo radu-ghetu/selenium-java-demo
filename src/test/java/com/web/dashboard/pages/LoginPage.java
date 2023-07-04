@@ -1,24 +1,14 @@
 package com.web.dashboard.pages;
 
 import com.web.dashboard.pages.abstractPages.AbstractBredPage;
-import com.web.util.BrowserUtils;
 import com.web.util.ConfigurationReader;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.interactions.Actions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static com.web.util.ConfigurationReader.get;
 import static com.web.util.Driver.getDriver;
 import static org.junit.Assert.assertTrue;
 
@@ -38,10 +28,10 @@ public class LoginPage extends AbstractBredPage {
     @FindBy(id = "input-email")
     public WebElement inputEmail;
 
-    @FindBy(id="flash")
+    @FindBy(id = "flash")
     public WebElement loginMessage;
 
-    @FindBy(css=".icon-signout")
+    @FindBy(css = ".icon-signout")
     public WebElement logout_btn;
 
     public void login(String user, String pass) {
@@ -65,7 +55,7 @@ public class LoginPage extends AbstractBredPage {
         }
     }
 
-     public void verifyLoginSuccess() {
+    public void verifyLoginSuccess() {
         waitForPageToLoad();
         assertTrue(loginMessage.getText().contains("You logged into a secure area!"));
     }
@@ -80,6 +70,10 @@ public class LoginPage extends AbstractBredPage {
     }
 
     public void navigate() {
-        getDriver().get(ConfigurationReader.get("url")+"/login");
+        getDriver().get(ConfigurationReader.get("url") + "/login");
+    }
+
+    public void verifyLoginError(String msg) {
+        assertTrue(loginMessage.getText().contains(msg));
     }
 }

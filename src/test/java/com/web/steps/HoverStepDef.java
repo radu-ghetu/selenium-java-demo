@@ -40,19 +40,19 @@ public class HoverStepDef {
 
     @And("I verify {string} is shown")
     public void iVerifyIsShown(String arg0) {
-       switch(arg0) {
-           case "user1": {
-               hoverPage.verifyCorrectCaptionShown(1);
-               break;
-           }
-           case "user2": {
-               hoverPage.verifyCorrectCaptionShown(2);
-               break;
-           }
-           case "user3": {
-               hoverPage.verifyCorrectCaptionShown(3);
-               break;
-           }
-       }
+        switch (arg0) {
+            case "user1": {
+                hoverPage.verifyCorrectCaptionShown(1);
+                break;
+            }
+            case "user2": {
+                hoverPage.verifyCorrectCaptionShown(2);
+                break;
+            }
+            case "user3": {
+                hoverPage.verifyCorrectCaptionShown(3);
+                break;
+            }
+        }
     }
 }

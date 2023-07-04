@@ -7,10 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.web.util.Driver.getDriver;
