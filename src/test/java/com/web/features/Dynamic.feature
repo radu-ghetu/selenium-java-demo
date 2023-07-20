@@ -1,12 +1,14 @@
 @Prod @Int
 Feature: DynamicTests
 
+  @dynamic
   Scenario: I, as a valid user should be able to remove a checkbox
     Given I'm on the dynamic page
     When I click the remove checkbox button
     And I verify the checkbox was removed
 
 
+  @dynamic
   Scenario: I, as a valid user should be able to disable an input
     Given I'm on the dynamic page
     When I click the disable button

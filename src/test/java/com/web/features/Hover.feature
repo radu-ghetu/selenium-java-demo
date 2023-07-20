@@ -4,6 +4,7 @@ Feature: HoverTest
   Background:
     Given I'm on the hover page
 
+  @hover
   Scenario Outline: I, as a valid user should be able to hover over elements
     When I hover over "<element>"
     And I verify "<object>" is shown
